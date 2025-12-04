@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I'M CLEAN - Recuperación de Adicciones</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .star {
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .star:hover {
+            transform: scale(1.1);
+        }
+
+        .chat-messages {
+            scrollbar-width: thin;
+            scrollbar-color: #2B5F9E #f1f1f1;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #2B5F9E;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-black">
+
+
+
+<!-- Pantalla de Login/Registro -->
+<div id="loginScreen" class="min-h-screen bg-black flex items-center justify-center p-8">
+    <div id="loginInitial" class="flex flex-col md:flex-row items-center gap-8 md:gap-16">
+        <img src="https://elzocco.com/wp-content/uploads/2023/12/111-de-milo-j-300x257.jpg" alt="I'm Clean Logo" class="w-48 h-48 md:w-64 md:h-64 object-contain">
+        
+        <div class="flex flex-col gap-4">
+            <button onclick="showLoginForm(true)" class="flex items-center gap-3 bg-[#1DA1F2] hover:bg-[#1a8cd8] text-white px-8 py-3 rounded-full transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                </svg>
+                <span>Iniciar sesión</span>
+            </button>
+            
+            <button onclick="showLoginForm(false)" class="flex items-center gap-3 bg-[#1DA1F2] hover:bg-[#1a8cd8] text-white px-8 py-3 rounded-full transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                </svg>
+                <span>Registrarse</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="loginForm" class="hidden flex flex-col md:flex-row items-center gap-8 md:gap-16">
+        <img src="https://elzocco.com/wp-content/uploads/2023/12/111-de-milo-j-300x257.jpg" alt="I'm Clean Logo" class="w-48 h-48 md:w-64 md:h-64 object-contain">
+        
+        <div class="flex flex-col gap-6 w-full max-w-sm">
+            <button onclick="backToInitial()" class="flex items-center gap-3 bg-[#1DA1F2] hover:bg-[#1a8cd8] text-white px-8 py-3 rounded-full transition-colors self-start md:self-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                </svg>
+                <span id="formTitle">Iniciar sesión</span>
+            </button>
+            
+            <form onsubmit="handleAuth(event)" class="flex flex-col gap-4">
+                <input type="text" id="username" placeholder="Usuario:" class="w-full px-4 py-3 rounded-lg bg-white text-black placeholder-gray-600" required>
+                
+                <div id="registerFields" class="hidden flex flex-col gap-4">
+                    <input type="email" id="email" placeholder="Correo:" class="w-full px-4 py-3 rounded-lg bg-white text-black placeholder-gray-600">
+                    <input type="tel" id="phone" placeholder="Teléfono:" class="w-full px-4 py-3 rounded-lg bg-white text-black placeholder-gray-600">
+                </div>
+                
+                <input type="password" id="password" placeholder="Contraseña:" class="w-full px-4 py-3 rounded-lg bg-white text-black placeholder-gray-600" required>
+                
+                <div class="flex gap-4 mt-2">
+                    <button type="button" onclick="toggleAuthMode()" class="px-6 py-2 rounded-lg bg-gray-300 hover:bg-gray-400 text-black transition-colors">
+                        <span id="toggleBtn">Registrarse</span>
+                    </button>
+                    <button type="submit" class="px-6 py-2 rounded-lg bg-gray-300 hover:bg-gray-400 text-black transition-colors">
+                        Aceptar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Selector de Adicción -->
+<div id="addictionSelector" class="hidden min-h-screen bg-gradient-to-b from-[#1E4A7A] to-[#2B5F9E] flex items-center justify-center p-8">
+    <div class="bg-white/10 backdrop-blur-sm rounded-3xl p-8 md:p-12 max-w-2xl w-full">
+        <h2 class="text-white text-4xl text-center mb-8">Selecciona tu adicción</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <button onclick="selectAddiction('alcohol')" class="bg-white hover:bg-gray-100 rounded-2xl p-8 flex flex-col items-center gap-4 transition-all hover:scale-105">
+                <div class="w-20 h-20 bg-gradient-to-br from-purple-500 to-purple-700 rounded-full flex items-center justify-center">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                    </svg>
+                </div>
+                <span class="text-gray-800 text-xl font-semibold">Alcohol</span>
+            </button>
+
+            <button onclick="selectAddiction('tabaco')" class="bg-white hover:bg-gray-100 rounded-2xl p-8 flex flex-col items-center gap-4 transition-all hover:scale-105">
+                <div class="w-20 h-20 bg-gradient-to-br from-orange-500 to-orange-700 rounded-full flex items-center justify-center">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+                    </svg>
+                </div>
+                <span class="text-gray-800 text-xl font-semibold">Tabaco</span>
+            </button>
+
+            <button onclick="selectAddiction('cannabis')" class="bg-white hover:bg-gray-100 rounded-2xl p-8 flex flex-col items-center gap-4 transition-all hover:scale-105">
+                <div class="w-20 h-20 bg-gradient-to-br from-green-500 to-green-700 rounded-full flex items-center justify-center">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                    </svg>
+                </div>
+                <span class="text-gray-800 text-xl font-semibold">Cannabis</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Aplicación Principal -->
+<div id="mainApp" class="hidden min-h-screen bg-[#2B5F9E] p-4">
+    <!-- Barra de navegación -->
+    <nav class="bg-black py-4 px-6 rounded-lg mb-6">
+        <div class="flex items-center gap-4 flex-wrap">
+            <button onclick="showScreen('counter')" id="navCounter" class="flex items-center gap-2 px-6 py-2 rounded-full transition-colors bg-[#1976D2] text-white">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span>Contador</span>
+            </button>
+            
+            <button onclick="showScreen('calendar')" id="navCalendar" class="flex items-center gap-2 px-6 py-2 rounded-full transition-colors bg-gray-700 hover:bg-gray-600 text-white">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                <span>Calendario</span>
+            </button>
+            
+            <button onclick="showScreen('reviews')" id="navReviews" class="flex items-center gap-2 px-6 py-2 rounded-full transition-colors bg-gray-700 hover:bg-gray-600 text-white">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                </svg>
+                <span>Reseñas</span>
+            </button>
+            
+            <button onclick="showScreen('chatbot')" id="navChatbot" class="flex items-center gap-2 px-6 py-2 rounded-full transition-colors bg-gray-700 hover:bg-gray-600 text-white">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+                <span>Chat Bot</span>
+            </button>
+
+            <button onclick="showScreen('settings')" class="ml-auto bg-red-600 hover:bg-red-700 text-white p-2 rounded-full transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Pantalla Contador -->
+    <div id="counterScreen" class="screen-content">
+        <div class="flex items-center justify-center min-h-[calc(100vh-120px)]">
+            <div class="bg-[#1E4A7A] rounded-3xl p-8 md:p-12 w-full max-w-3xl">
+                <h2 class="text-white text-3xl text-center mb-8" id="counterTitle">Tiempo sin consumir</h2>
+                
+                <div class="bg-[#2B5F9E] rounded-2xl p-8 mb-6">
+                    <div class="grid grid-cols-4 gap-4 text-center">
+                        <div>
+                            <div class="text-white text-5xl font-bold mb-2" id="days">00</div>
+                            <div class="text-white/70 text-lg">Días</div>
+                        </div>
+                        <div>
+                            <div class="text-white text-5xl font-bold mb-2" id="hours">00</div>
+                            <div class="text-white/70 text-lg">Horas</div>
+                        </div>
+                        <div>
+                            <div class="text-white text-5xl font-bold mb-2" id="minutes">00</div>
+                            <div class="text-white/70 text-lg">Minutos</div>
+                        </div>
+                        <div>
+                            <div class="text-white text-5xl font-bold mb-2" id="seconds">00</div>
+                            <div class="text-white/70 text-lg">Segundos</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-[#4CAF50] h-4 rounded-full mb-6">
+                    <div id="progressBar" class="bg-[#45A049] h-4 rounded-full transition-all" style="width: 0%"></div>
+                </div>
+
+                <div class="flex justify-center gap-4">
+                    <button onclick="resetCounter()" class="flex items-center gap-2 bg-[#F44336] hover:bg-[#D32F2F] text-white px-8 py-3 rounded-full transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        <span>Reiniciar contador</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pantalla Calendario -->
+    <div id="calendarScreen" class="screen-content hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="bg-white rounded-2xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <button onclick="changeMonth(-1)" class="px-4 py-2 bg-[#2B5F9E] text-white rounded-lg hover:bg-[#1E4A7A]">←</button>
+                    <h3 class="text-gray-800 text-xl font-semibold" id="calendarTitle">Enero 2024</h3>
+                    <button onclick="changeMonth(1)" class="px-4 py-2 bg-[#2B5F9E] text-white rounded-lg hover:bg-[#1E4A7A]">→</button>
+                </div>
+
+                <div class="grid grid-cols-7 gap-2 mb-2">
+                    <div class="text-center text-gray-600 text-sm font-semibold">D</div>
+                    <div class="text-center text-gray-600 text-sm font-semibold">L</div>
+                    <div class="text-center text-gray-600 text-sm font-semibold">M</div>
+                    <div class="text-center text-gray-600 text-sm font-semibold">M</div>
+                    <div class="text-center text-gray-600 text-sm font-semibold">J</div>
+                    <div class="text-center text-gray-600 text-sm font-semibold">V</div>
+                    <div class="text-center text-gray-600 text-sm font-semibold">S</div>
+                </div>
+
+                <div id="calendarDays" class="grid grid-cols-7 gap-2 mb-6"></div>
+
+                <div id="noteInput" class="hidden">
+                    <textarea id="noteText" placeholder="Escribe una nota para este día..." class="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 placeholder-gray-500 min-h-[100px] resize-none mb-2"></textarea>
+                    <button onclick="saveNote()" class="w-full bg-[#4CAF50] hover:bg-[#45A049] text-white py-2 rounded-lg transition-colors">Guardar nota</button>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6">
+                <h3 class="text-gray-800 text-xl font-semibold mb-4">Mis notas</h3>
+                <div id="notesList" class="space-y-3 max-h-[600px] overflow-y-auto"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pantalla Reseñas -->
+    <div id="reviewsScreen" class="screen-content hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="bg-[#1E4A7A] rounded-2xl p-6">
+                <h3 class="text-white text-xl font-semibold mb-4">Escribe una reseña</h3>
+                
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center">
+                        <span class="text-[#1E4A7A] text-xl font-bold" id="reviewAvatar">U</span>
+                    </div>
+                    <span class="text-white text-lg" id="reviewUsername">Usuario</span>
+                </div>
+
+                <div class="flex gap-2 mb-4" id="starRating">
+                    <svg class="star w-10 h-10" data-rating="1" onclick="setRating(1)" fill="transparent" stroke="#FFA500" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                    </svg>
+                    <svg class="star w-10 h-10" data-rating="2" onclick="setRating(2)" fill="transparent" stroke="#FFA500" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                    </svg>
+                    <svg class="star w-10 h-10" data-rating="3" onclick="setRating(3)" fill="transparent" stroke="#FFA500" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                    </svg>
+                    <svg class="star w-10 h-10" data-rating="4" onclick="setRating(4)" fill="transparent" stroke="#FFA500" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                    </svg>
+                    <svg class="star w-10 h-10" data-rating="5" onclick="setRating(5)" fill="transparent" stroke="#FFA500" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                    </svg>
+                </div>
+
+                <textarea id="reviewText" placeholder="Escribe tu reseña aquí..." class="w-full bg-[#D9D9D9] text-gray-700 placeholder-gray-500 px-4 py-3 rounded-lg min-h-[120px] resize-none mb-4"></textarea>
+
+                <button onclick="publishReview()" class="w-full bg-[#4CAF50] hover:bg-[#45A049] text-white py-3 rounded-full transition-colors">Publicar reseña</button>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6">
+                <h3 class="text-gray-800 text-xl font-semibold mb-4">Reseñas publicadas</h3>
+                <div id="reviewsList" class="space-y-4 max-h-[600px] overflow-y-auto"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pantalla Chat Bot -->
+    <div id="chatbotScreen" class="screen-content hidden">
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-white rounded-2xl overflow-hidden shadow-lg">
+                <div class="bg-[#1E4A7A] p-4">
+                    <h3 class="text-white text-xl font-semibold">Chat Bot - Asistente de Recuperación</h3>
+                    <p class="text-white/70 text-sm">Respuestas instantáneas a tus preguntas</p>
+                </div>
+
+                <div id="chatMessages" class="chat-messages h-[500px] overflow-y-auto p-4 bg-gray-50"></div>
+
+                <div class="p-4 bg-white border-t border-gray-200">
+                    <div class="flex gap-2">
+                        <input type="text" id="chatInput" placeholder="Escribe tu mensaje aquí..." class="flex-1 px-4 py-3 rounded-full border border-gray-300 focus:outline-none focus:border-[#2B5F9E] text-gray-800" onkeypress="if(event.key === 'Enter') sendMessage()">
+                        <button onclick="sendMessage()" class="bg-[#2B5F9E] hover:bg-[#1E4A7A] text-white p-3 rounded-full transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pantalla Ajustes -->
+    <div id="settingsScreen" class="screen-content hidden">
+        <div class="max-w-2xl mx-auto">
+            <div class="bg-white rounded-2xl p-8 shadow-lg">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-gray-800 text-2xl font-semibold">Configuración de Cuenta</h2>
+                    <button onclick="logout()" class="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-full transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                        </svg>
+                        <span>Cerrar sesión</span>
+                    </button>
+                </div>
+
+                <div class="flex justify-center mb-6">
+                    <div class="w-24 h-24 bg-gradient-to-br from-[#2B5F9E] to-[#1E4A7A] rounded-full flex items-center justify-center">
+                        <span class="text-white text-4xl font-bold" id="settingsAvatar">U</span>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-gray-700 mb-2 font-semibold">Usuario</label>
+                        <input type="text" id="settingsUsername" class="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 disabled:bg-gray-100" disabled>
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 mb-2 font-semibold">Correo Electrónico</label>
+                        <input type="email" id="settingsEmail" class="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 disabled:bg-gray-100" disabled>
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 mb-2 font-semibold">Número de Teléfono</label>
+                        <input type="tel" id="settingsPhone" class="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 disabled:bg-gray-100" disabled>
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 mb-2 font-semibold">Contraseña</label>
+                        <div class="relative">
+                            <input type="password" id="settingsPassword" class="w-full px-4 py-3 pr-12 rounded-lg border border-gray-300 text-gray-800 disabled:bg-gray-100" disabled>
+                            <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700">
+                                <svg id="eyeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 mb-2 font-semibold">Tipo de Adicción</label>
+                        <select id="settingsAddiction" class="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 disabled:bg-gray-100" disabled>
+                            <option value="alcohol">Alcohol</option>
+                            <option value="tabaco">Tabaco</option>
+                            <option value="cannabis">Cannabis</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 mb-2 font-semibold">Fecha de Inicio</label>
+                        <input type="text" id="settingsStartDate" class="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 bg-gray-100" disabled>
+                    </div>
+
+                    <div class="flex gap-4 pt-4">
+                        <button id="editBtn" onclick="toggleEdit()" class="flex-1 bg-[#2B5F9E] hover:bg-[#1E4A7A] text-white py-3 rounded-full transition-colors">
+                            Editar Información
+                        </button>
+                        <button id="saveBtn" onclick="saveSettings()" class="hidden flex-1 flex items-center justify-center gap-2 bg-[#4CAF50] hover:bg-[#45A049] text-white py-3 rounded-full transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
+                            </svg>
+                            <span>Guardar Cambios</span>
+                        </button>
+                        <button id="cancelBtn" onclick="cancelEdit()" class="hidden flex-1 bg-gray-400 hover:bg-gray-500 text-white py-3 rounded-full transition-colors">
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Variables globales
+let currentUser = null;
+let isLoginMode = true;
+let currentRating = 0;
+let counterInterval = null;
+let currentDate = new Date();
+let selectedDate = null;
+let currentScreen = 'counter';
+let isEditing = false;
+
+// Cargar usuario al iniciar
+window.onload = function() {
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+        currentUser = JSON.parse(savedUser);
+        if (currentUser.addiction) {
+            showMainApp();
+        } else {
+            showAddictionSelector();
+        }
+    }
+};
+
+// Login/Registro
+function showLoginForm(isLogin) {
+    isLoginMode = isLogin;
+    document.getElementById('loginInitial').classList.add('hidden');
+    document.getElementById('loginForm').classList.remove('hidden');
+    document.getElementById('formTitle').textContent = isLogin ? 'Iniciar sesión' : 'Registrarse';
+    document.getElementById('toggleBtn').textContent = isLogin ? 'Registrarse' : 'Ya tengo cuenta';
+    document.getElementById('registerFields').classList.toggle('hidden', isLogin);
+}
+
+function backToInitial() {
+    document.getElementById('loginInitial').classList.remove('hidden');
+    document.getElementById('loginForm').classList.add('hidden');
+}
+
+function toggleAuthMode() {
+    isLoginMode = !isLoginMode;
+    document.getElementById('formTitle').textContent = isLoginMode ? 'Iniciar sesión' : 'Registrarse';
+    document.getElementById('toggleBtn').textContent = isLoginMode ? 'Registrarse' : 'Ya tengo cuenta';
+    document.getElementById('registerFields').classList.toggle('hidden', isLoginMode);
+}
+
+function handleAuth(event) {
+    event.preventDefault();
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    
+    if (isLoginMode) {
+        // Mock login - En Django harías fetch a /api/auth/login/
+        currentUser = {
+            id: 1,
+            username: username,
+            email: 'user@example.com',
+            phone: '1234567890',
+            password: password
+        };
+    } else {
+        const email = document.getElementById('email').value;
+        const phone = document.getElementById('phone').value;
+        
+        // Mock registro - En Django harías fetch a /api/auth/register/
+        currentUser = {
+            id: 1,
+            username: username,
+            email: email,
+            phone: phone,
+            password: password
+        };
+    }
+    
+    localStorage.setItem('user', JSON.stringify(currentUser));
+    showAddictionSelector();
+}
+
+// Selector de adicción
+function showAddictionSelector() {
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('addictionSelector').classList.remove('hidden');
+}
+
+function selectAddiction(addiction) {
+    currentUser.addiction = addiction;
+    currentUser.startDate = new Date().toISOString();
+    localStorage.setItem('user', JSON.stringify(currentUser));
+    
+    // Aquí enviarías a Django: fetch('/api/users/update/', {...})
+    
+    showMainApp();
+}
+
+// Aplicación principal
+function showMainApp() {
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('addictionSelector').classList.add('hidden');
+    document.getElementById('mainApp').classList.remove('hidden');
+    
+    showScreen('counter');
+    startCounter();
+    initChatBot();
+    loadReviews();
+    loadNotes();
+}
+
+function showScreen(screen) {
+    currentScreen = screen;
+    
+    // Ocultar todas las pantallas
+    document.querySelectorAll('.screen-content').forEach(el => el.classList.add('hidden'));
+    
+    // Actualizar botones de navegación
+    document.querySelectorAll('nav button').forEach(btn => {
+        btn.classList.remove('bg-[#1976D2]');
+        btn.classList.add('bg-gray-700', 'hover:bg-gray-600');
+    });
+    
+    // Mostrar pantalla seleccionada
+    const screenElement = document.getElementById(screen + 'Screen');
+    if (screenElement) {
+        screenElement.classList.remove('hidden');
+        const navBtn = document.getElementById('nav' + screen.charAt(0).toUpperCase() + screen.slice(1));
+        if (navBtn) {
+            navBtn.classList.add('bg-[#1976D2]');
+            navBtn.classList.remove('bg-gray-700', 'hover:bg-gray-600');
+        }
+    }
+    
+    // Inicializar pantallas específicas
+    if (screen === 'calendar') {
+        renderCalendar();
+    } else if (screen === 'settings') {
+        loadSettings();
+    }
+}
+
+// Contador
+function startCounter() {
+    if (!currentUser.startDate) return;
+    
+    const addictionText = {
+        'alcohol': 'beber',
+        'tabaco': 'fumar',
+        'cannabis': 'consumir'
+    };
+    
+    document.getElementById('counterTitle').textContent = 
+        `Tiempo sin ${addictionText[currentUser.addiction] || 'consumir'}`;
+    
+    updateCounter();
+    counterInterval = setInterval(updateCounter, 1000);
+}
+
+function updateCounter() {
+    const start = new Date(currentUser.startDate).getTime();
+    const now = new Date().getTime();
+    const difference = now - start;
+    
+    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+    
+    document.getElementById('days').textContent = String(days).padStart(2, '0');
+    document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+    document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+    document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+    
+    // Actualizar barra de progreso (ejemplo: meta de 30 días)
+    const progress = Math.min((days / 30) * 100, 100);
+    document.getElementById('progressBar').style.width = progress + '%';
+}
+
+function resetCounter() {
+    if (confirm('¿Estás seguro de que quieres reiniciar el contador?')) {
+        currentUser.startDate = new Date().toISOString();
+        localStorage.setItem('user', JSON.stringify(currentUser));
+        // Aquí enviarías a Django: fetch('/api/users/reset-counter/', {...})
+        updateCounter();
+    }
+}
+
+// Calendario
+function renderCalendar() {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDayOfWeek = firstDay.getDay();
+    
+    const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                       'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    
+    document.getElementById('calendarTitle').textContent = `${monthNames[month]} ${year}`;
+    
+    const calendarDays = document.getElementById('calendarDays');
+    calendarDays.innerHTML = '';
+    
+    // Días vacíos al inicio
+    for (let i = 0; i < startingDayOfWeek; i++) {
+        const emptyDiv = document.createElement('div');
+        emptyDiv.className = 'aspect-square';
+        calendarDays.appendChild(emptyDiv);
+    }
+    
+    // Días del mes
+    const notes = JSON.parse(localStorage.getItem(`notes_${currentUser.id}`) || '[]');
+    
+    for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(year, month, day);
+        const dateString = date.toISOString().split('T')[0];
+        const hasNote = notes.some(note => note.date === dateString);
+        const isSelected = selectedDate && selectedDate.toDateString() === date.toDateString();
+        
+        const dayBtn = document.createElement('button');
+        dayBtn.className = `aspect-square rounded-lg flex items-center justify-center transition-colors ${
+            isSelected ? 'bg-[#2B5F9E] text-white' :
+            hasNote ? 'bg-[#4CAF50] text-white' :
+            'bg-gray-100 hover:bg-gray-200 text-gray-800'
+        }`;
+        dayBtn.textContent = day;
+        dayBtn.onclick = () => selectDay(date);
+        calendarDays.appendChild(dayBtn);
+    }
+    
+    renderNotesList();
+}
+
+function changeMonth(delta) {
+    currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + delta, 1);
+    renderCalendar();
+}
+
+function selectDay(date) {
+    selectedDate = date;
+    const dateString = date.toISOString().split('T')[0];
+    const notes = JSON.parse(localStorage.getItem(`notes_${currentUser.id}`) || '[]');
+    const existingNote = notes.find(note => note.date === dateString);
+    
+    document.getElementById('noteText').value = existingNote ? existingNote.text : '';
+    document.getElementById('noteInput').classList.remove('hidden');
+    renderCalendar();
+}
+
+function saveNote() {
+    if (!selectedDate) return;
+    
+    const noteText = document.getElementById('noteText').value.trim();
+    if (!noteText) {
+        alert('Por favor escribe una nota');
+        return;
+    }
+    
+    const dateString = selectedDate.toISOString().split('T')[0];
+    const notes = JSON.parse(localStorage.getItem(`notes_${currentUser.id}`) || '[]');
+    const existingIndex = notes.findIndex(note => note.date === dateString);
+    
+    if (existingIndex >= 0) {
+        notes[existingIndex].text = noteText;
+    } else {
+        notes.push({
+            id: Date.now(),
+            date: dateString,
+            text: noteText
+        });
+    }
+    
+    localStorage.setItem(`notes_${currentUser.id}`, JSON.stringify(notes));
+    // Aquí enviarías a Django: fetch('/api/notes/', {...})
+    
+    alert('Nota guardada');
+    renderCalendar();
+}
+
+function loadNotes() {
+    renderNotesList();
+}
+
+function renderNotesList() {
+    const notes = JSON.parse(localStorage.getItem(`notes_${currentUser.id}`) || '[]');
+    const notesList = document.getElementById('notesList');
+    
+    if (notes.length === 0) {
+        notesList.innerHTML = '<p class="text-gray-500 text-center py-8">No hay notas guardadas</p>';
+        return;
+    }
+    
+    notesList.innerHTML = notes.map(note => `
+        <div class="bg-[#FFF4E6] rounded-lg p-4 flex items-start gap-3">
+            <div class="flex-1">
+                <div class="text-sm text-gray-600 mb-1">
+                    ${new Date(note.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}
+                </div>
+                <div class="text-gray-800">${note.text}</div>
+            </div>
+            <button onclick="deleteNote(${note.id})" class="text-red-600 hover:text-red-700 p-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+            </button>
+        </div>
+    `).join('');
+}
+
+function deleteNote(noteId) {
+    const notes = JSON.parse(localStorage.getItem(`notes_${currentUser.id}`) || '[]');
+    const updatedNotes = notes.filter(note => note.id !== noteId);
+    localStorage.setItem(`notes_${currentUser.id}`, JSON.stringify(updatedNotes));
+    // Aquí enviarías a Django: fetch(`/api/notes/${noteId}/`, { method: 'DELETE' })
+    renderCalendar();
+}
+
+// Reseñas
+function setRating(rating) {
+    currentRating = rating;
+    const stars = document.querySelectorAll('.star');
+    stars.forEach((star, index) => {
+        if (index < rating) {
+            star.setAttribute('fill', '#FFA500');
+        } else {
+            star.setAttribute('fill', 'transparent');
+        }
+    });
+}
+
+function publishReview() {
+    const reviewText = document.getElementById('reviewText').value.trim();
+    
+    if (!reviewText || currentRating === 0) {
+        alert('Por favor, agrega una calificación y un comentario');
+        return;
+    }
+    
+    const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+    const newReview = {
+        id: Date.now(),
+        userId: currentUser.id,
+        username: currentUser.username,
+        rating: currentRating,
+        text: reviewText,
+        createdAt: new Date().toISOString()
+    };
+    
+    reviews.unshift(newReview);
+    localStorage.setItem('reviews', JSON.stringify(reviews));
+    
+    // Aquí enviarías a Django: fetch('/api/reviews/', {...})
+    
+    document.getElementById('reviewText').value = '';
+    currentRating = 0;
+    setRating(0);
+    
+    alert('Reseña publicada correctamente');
+    loadReviews();
+}
+
+function loadReviews() {
+    const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+    const reviewsList = document.getElementById('reviewsList');
+    
+    document.getElementById('reviewAvatar').textContent = currentUser.username.charAt(0).toUpperCase();
+    document.getElementById('reviewUsername').textContent = currentUser.username;
+    
+    if (reviews.length === 0) {
+        reviewsList.innerHTML = '<p class="text-gray-500 text-center py-8">No hay reseñas aún</p>';
+        return;
+    }
+    
+    reviewsList.innerHTML = reviews.map(review => `
+        <div class="bg-[#FFF4E6] rounded-lg p-4">
+            <div class="flex items-start justify-between mb-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-[#2B5F9E] rounded-full flex items-center justify-center">
+                        <span class="text-white font-semibold">${review.username.charAt(0).toUpperCase()}</span>
+                    </div>
+                    <div>
+                        <div class="text-gray-800 font-semibold">${review.username}</div>
+                        <div class="flex gap-1">
+                            ${Array(5).fill(0).map((_, i) => `
+                                <svg class="w-4 h-4" fill="${i < review.rating ? '#FFA500' : 'transparent'}" stroke="#FFA500" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                                </svg>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+                ${review.userId === currentUser.id ? `
+                    <button onclick="deleteReview(${review.id})" class="text-red-600 hover:text-red-700 p-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </button>
+                ` : ''}
+            </div>
+            <p class="text-gray-700 ml-13">${review.text}</p>
+            <div class="text-xs text-gray-500 mt-2">
+                ${new Date(review.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}
+            </div>
+        </div>
+    `).join('');
+}
+
+function deleteReview(reviewId) {
+    if (confirm('¿Estás seguro de que quieres eliminar esta reseña?')) {
+        const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+        const updatedReviews = reviews.filter(review => review.id !== reviewId);
+        localStorage.setItem('reviews', JSON.stringify(updatedReviews));
+        // Aquí enviarías a Django: fetch(`/api/reviews/${reviewId}/`, { method: 'DELETE' })
+        loadReviews();
+    }
+}
+
+// Chat Bot
+function initChatBot() {
+    const chatMessages = document.getElementById('chatMessages');
+    const welcomeMessage = {
+        text: `¡Hola ${currentUser.username}! Soy tu asistente virtual. Estoy aquí para ayudarte con información sobre ${
+            currentUser.addiction === 'alcohol' ? 'el alcoholismo' : 
+            currentUser.addiction === 'tabaco' ? 'el tabaquismo' : 
+            'el consumo de cannabis'
+        }. ¿En qué puedo ayudarte?`,
+        isBot: true,
+        timestamp: new Date()
+    };
+    
+    addMessageToChat(welcomeMessage);
+}
+
+function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    
+    if (!text) return;
+    
+    // Mensaje del usuario
+    const userMessage = {
+        text: text,
+        isBot: false,
+        timestamp: new Date()
+    };
+    addMessageToChat(userMessage);
+    
+    input.value = '';
+    
+    // Respuesta del bot (simulada)
+    setTimeout(() => {
+        const botResponse = {
+            text: getBotResponse(text),
+            isBot: true,
+            timestamp: new Date()
+        };
+        addMessageToChat(botResponse);
+    }, 500);
+}
+
+function addMessageToChat(message) {
+    const chatMessages = document.getElementById('chatMessages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `mb-4 flex ${message.isBot ? 'justify-start' : 'justify-end'}`;
+    
+    messageDiv.innerHTML = `
+        <div class="max-w-[70%] rounded-2xl px-4 py-3 ${
+            message.isBot
+                ? 'bg-white text-gray-800 shadow'
+                : 'bg-[#2B5F9E] text-white'
+        }">
+            ${message.isBot ? `
+                <div class="flex items-center gap-2 mb-1">
+                    <div class="w-6 h-6 bg-[#2B5F9E] rounded-full flex items-center justify-center">
+                        <span class="text-white text-xs">🤖</span>
+                    </div>
+                    <span class="text-xs text-gray-600">Bot</span>
+                </div>
+            ` : ''}
+            <p class="whitespace-pre-wrap">${message.text}</p>
+            <div class="text-xs mt-1 ${message.isBot ? 'text-gray-400' : 'text-white/70'}">
+                ${message.timestamp.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+            </div>
+        </div>
+    `;
+    
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function getBotResponse(userMessage) {
+    const message = userMessage.toLowerCase();
+    
+    // Respuestas específicas por adicción
+    if (message.includes('alcohol') || currentUser.addiction === 'alcohol') {
+        if (message.includes('síntoma') || message.includes('sintoma') || message.includes('efectos')) {
+            return 'Los síntomas del alcoholismo incluyen: necesidad urgente de beber, pérdida de control sobre la cantidad, síndrome de abstinencia (temblores, sudoración, ansiedad), tolerancia aumentada, y problemas en relaciones personales o trabajo. ¿Necesitas más información?';
+        }
+        if (message.includes('ayuda') || message.includes('dejar')) {
+            return 'Dejar el alcohol es un proceso que requiere apoyo. Algunas recomendaciones: busca ayuda profesional, asiste a grupos de apoyo como AA, mantente ocupado con actividades saludables, evita situaciones de riesgo, y cuenta con el apoyo de familiares y amigos. ¿Te gustaría conocer técnicas específicas?';
+        }
+        if (message.includes('recaída') || message.includes('recaida')) {
+            return 'Las recaídas son parte del proceso de recuperación. Si ocurre: no te castigues, identifica qué la provocó, busca apoyo inmediatamente, retoma tu plan de recuperación, y aprende de la experiencia. Recuerda: una recaída no significa fracaso. ¿Necesitas hablar de algo específico?';
+        }
+    }
+    
+    if (message.includes('tabaco') || message.includes('fumar') || currentUser.addiction === 'tabaco') {
+        if (message.includes('síntoma') || message.includes('sintoma') || message.includes('efectos')) {
+            return 'Efectos del tabaquismo: enfermedades cardiovasculares, cáncer de pulmón y otros tipos, EPOC, envejecimiento prematuro, problemas dentales, y reducción de la capacidad pulmonar. La buena noticia es que tu cuerpo comienza a recuperarse desde el primer día sin fumar. ¿Quieres saber más?';
+        }
+        if (message.includes('ayuda') || message.includes('dejar')) {
+            return 'Consejos para dejar de fumar: establece una fecha para dejar, identifica tus triggers, considera terapia de reemplazo de nicotina, mantén las manos ocupadas, practica ejercicio, bebe mucha agua, y celebra cada logro. El apoyo profesional aumenta las probabilidades de éxito. ¿Te interesa algún método en particular?';
+        }
+        if (message.includes('ansiedad')) {
+            return 'La ansiedad al dejar de fumar es normal. Técnicas que ayudan: respiración profunda, ejercicio físico, meditación, mantenerse ocupado, chicles sin azúcar, y recordar que los síntomas son temporales (generalmente mejoran en 2-4 semanas). ¿Necesitas técnicas de relajación específicas?';
+        }
+    }
+    
+    if (message.includes('cannabis') || message.includes('marihuana') || currentUser.addiction === 'cannabis') {
+        if (message.includes('síntoma') || message.includes('sintoma') || message.includes('efectos')) {
+            return 'Efectos del consumo de cannabis: problemas de memoria y concentración, alteraciones del estado de ánimo, riesgo de trastornos de ansiedad, afectación del rendimiento académico/laboral, y en consumo prolongado, puede afectar el desarrollo cerebral en jóvenes. ¿Quieres información sobre la recuperación?';
+        }
+        if (message.includes('ayuda') || message.includes('dejar')) {
+            return 'Para dejar el cannabis: establece razones claras para dejarlo, evita personas y lugares asociados al consumo, encuentra actividades alternativas, practica ejercicio regularmente, establece una rutina saludable, y considera apoyo psicológico. El proceso mejora gradualmente. ¿Te gustaría conocer más estrategias?';
+        }
+        if (message.includes('abstinencia')) {
+            return 'Síntomas de abstinencia del cannabis pueden incluir: irritabilidad, problemas para dormir, cambios de apetito, inquietud, y ansiedad. Suelen aparecer en las primeras 24-72 horas y mejorar en 1-2 semanas. Mantenerse activo y con apoyo ayuda mucho. ¿Necesitas técnicas para manejar estos síntomas?';
+        }
+    }
+    
+    // Respuestas generales
+    if (message.includes('motivación') || message.includes('motivacion') || message.includes('ánimo') || message.includes('animo')) {
+        return `¡Estás haciendo un gran trabajo ${currentUser.username}! Cada día sin consumir es una victoria. Recuerda por qué empezaste este camino y todo lo que has logrado hasta ahora. La recuperación es posible y tú lo estás demostrando. ¿Quieres hablar sobre tus logros?`;
+    }
+    
+    if (message.includes('grupo') || message.includes('apoyo')) {
+        return 'Los grupos de apoyo son fundamentales en la recuperación. Algunas opciones: Alcohólicos Anónimos (AA), Narcóticos Anónimos (NA), grupos de terapia comunitaria, y foros online especializados. Compartir experiencias con otros en recuperación es muy beneficioso. ¿Te gustaría información sobre algún grupo específico?';
+    }
+    
+    if (message.includes('familia')) {
+        return 'El apoyo familiar es crucial. Consejos: comunica abiertamente tus necesidades, educa a tu familia sobre la adicción, establece límites saludables, participa en terapia familiar si es posible, y agradece su apoyo. Recuerda que la recuperación afecta a todos y requiere paciencia mutua. ¿Hay algo específico que quieras saber?';
+    }
+    
+    // Respuesta por defecto
+    return 'Puedo ayudarte con información sobre adicciones, síntomas, tratamientos, técnicas de afrontamiento, y motivación. También puedo orientarte sobre grupos de apoyo y recursos disponibles. ¿Sobre qué te gustaría saber más?';
+}
+
+// Ajustes
+function loadSettings() {
+    document.getElementById('settingsAvatar').textContent = currentUser.username.charAt(0).toUpperCase();
+    document.getElementById('settingsUsername').value = currentUser.username;
+    document.getElementById('settingsEmail').value = currentUser.email;
+    document.getElementById('settingsPhone').value = currentUser.phone;
+    document.getElementById('settingsPassword').value = currentUser.password;
+    document.getElementById('settingsAddiction').value = currentUser.addiction;
+    
+    if (currentUser.startDate) {
+        const date = new Date(currentUser.startDate);
+        document.getElementById('settingsStartDate').value = date.toLocaleDateString('es-ES', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+}
+
+function toggleEdit() {
+    isEditing = !isEditing;
+    
+    document.getElementById('settingsUsername').disabled = !isEditing;
+    document.getElementById('settingsEmail').disabled = !isEditing;
+    document.getElementById('settingsPhone').disabled = !isEditing;
+    document.getElementById('settingsPassword').disabled = !isEditing;
+    document.getElementById('settingsAddiction').disabled = !isEditing;
+    
+    document.getElementById('editBtn').classList.toggle('hidden');
+    document.getElementById('saveBtn').classList.toggle('hidden');
+    document.getElementById('cancelBtn').classList.toggle('hidden');
+}
+
+function cancelEdit() {
+    toggleEdit();
+    loadSettings();
+}
+
+function saveSettings() {
+    currentUser.username = document.getElementById('settingsUsername').value;
+    currentUser.email = document.getElementById('settingsEmail').value;
+    currentUser.phone = document.getElementById('settingsPhone').value;
+    currentUser.password = document.getElementById('settingsPassword').value;
+    currentUser.addiction = document.getElementById('settingsAddiction').value;
+    
+    localStorage.setItem('user', JSON.stringify(currentUser));
+    // Aquí enviarías a Django: fetch(`/api/users/${currentUser.id}/`, {...})
+    
+    toggleEdit();
+    alert('Información actualizada correctamente');
+}
+
+function togglePasswordVisibility() {
+    const passwordInput = document.getElementById('settingsPassword');
+    const type = passwordInput.type === 'password' ? 'text' : 'password';
+    passwordInput.type = type;
+}
+
+function logout() {
+    if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+        localStorage.removeItem('user');
+        location.reload();
+    }
+}
+</script>
+
+</body>
+</html>

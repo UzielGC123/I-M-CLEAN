@@ -1,0 +1,59 @@
+<!-- autores Michelle y Lizet-->
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Buscar</title>
+</head>
+<body>
+    <h1>Buscador producto:</h1>
+
+    <form action="" method="get">
+        <label>Buscar por usuario o teléfono:</label>
+        <input type="text" name="consultar_usuario" placeholder="Ej. ema" required>
+        <input type="submit" value="Buscar">
+    </form>
+
+    <hr>
+
+    <h2>Resultados:</h2>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>usuario</th>
+                <th>apellido</th>
+                <th>correo</th>
+                <th>password</th>
+                <th>telefono</th>
+                <th>adiccion</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cliente in resultados %}
+                <tr>
+                    <td>{{ cliente.usuario }}</td>
+                    <td>{{ cliente.apellido }}</td>
+                    <td>{{ cliente.correo }}</td>
+                    <td>{{ cliente.password }}</td>
+                    <td>{{ cliente.telefono }}</td>
+                    <td>{{ cliente.adiccion }}</td>
+
+                    <td>
+                        <a href="/editar/{{ cliente.id }}/">Editar</a>
+                    </td>
+                    <td>
+                        <a href="/eliminar/{{ cliente.id }}/">Eliminar</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6">No se encontraron productos con ese criterio.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>
